@@ -1,0 +1,56 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Final Report Exists
+      id: final-report-exists
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Final Report Exists
+        setup-command: ''
+        command: python _tests/pdf_report_validator.py
+        input: ''
+        expected-output: The final report exists.
+        comparison-method: contains
+        timeout: 10
+    - name: Model Directory Correctly Formatted
+      id: model-directory-correctly-formatted
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Model Directory Correctly Formatted
+        setup-command: ''
+        command: python _tests/model_files_validator.py
+        input: ''
+        expected-output: Model directory is correctly formatted.
+        comparison-method: contains
+        timeout: 10
+    - name: RAG Documents Exist
+      id: rag-documents-exist
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: RAG Documents Exist
+        setup-command: ''
+        command: python _tests/model_rag_validator.py
+        input: ''
+        expected-output: Model documents directory exists for the RAG implementation.
+        comparison-method: contains
+        timeout: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        FINAL-REPORT-EXISTS_RESULTS: "${{steps.final-report-exists.outputs.result}}"
+        MODEL-DIRECTORY-CORRECTLY-FORMATTED_RESULTS: "${{steps.model-directory-correctly-formatted.outputs.result}}"
+        RAG-DOCUMENTS-EXIST_RESULTS: "${{steps.rag-documents-exist.outputs.result}}"
+      with:
+        runners: final-report-exists,model-directory-correctly-formatted,rag-documents-exist
