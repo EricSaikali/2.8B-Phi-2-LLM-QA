@@ -1,4 +1,4 @@
-IMPLEMENTING_RAG = True
+IMPLEMENTING_RAG = False
 
 import os
 
