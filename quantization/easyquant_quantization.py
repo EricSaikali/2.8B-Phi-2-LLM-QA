@@ -27,7 +27,7 @@ if __name__ == "__main__":
     model_id = "microsoft/phi-2"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id)
-
+    model.eval() # TODO check if needed
     n = 2.5
     learning_rate = 0.01
     epochs = 100
