@@ -5,9 +5,10 @@ import torch.optim as optim
 
 class Quantizer:
 
-    def __init__(self, weights, n):
+    def __init__(self, weights, n, device):
         self.weights = weights
         self.n = n
+        self.device = device
 
     def compute_outliers(self):
         mean_weights = torch.mean(self.weights)
@@ -27,7 +28,7 @@ class Quantizer:
         return loss
 
     def optimize_quantization_range(self, learning_rate, epochs):
-        s = torch.tensor(1.0, requires_grad=True)
+        s = torch.tensor(1.0, requires_grad=True, device=self.device)
         optimizer = optim.Adam([s], lr=learning_rate)
 
         for epoch in range(epochs):

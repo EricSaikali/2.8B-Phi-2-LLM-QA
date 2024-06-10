@@ -6,11 +6,11 @@ import torch.optim as optim
 from quantization.quantizer import Quantizer
 
 
-def apply_quantization_to_model(model, n, learning_rate, epochs):
+def apply_quantization_to_model(model, n, learning_rate, epochs, device):
     for name, param in model.named_parameters():
         if 'weight' in name:
             weights = param.data
-            quantizer = Quantizer(weights, n)
+            quantizer = Quantizer(weights, n, device)
             outliers = quantizer.compute_outliers()
 
             # Optimize quantization range
@@ -23,17 +23,27 @@ def apply_quantization_to_model(model, n, learning_rate, epochs):
             param.data.copy_(dequantized_weights)
 
 
+def get_device():
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        return torch.device("mps")
+    else:
+        return torch.device("cpu")
+
+
 if __name__ == "__main__":
     model_id = "gpt2"
+    device = get_device()
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id)
-    model.eval() # TODO check if needed
+    model = AutoModelForCausalLM.from_pretrained(model_id).to(device)
+    model.eval()  # TODO check if needed
     n = 2.5
     learning_rate = 0.01
     epochs = 100
 
     # Apply quantization to the pretrained model
-    apply_quantization_to_model(model, n, learning_rate, epochs)
+    apply_quantization_to_model(model, n, learning_rate, epochs, device)
     # Save the quantized model
     quantized_model_path = "quantized_phi_2_model.pth"
     torch.save(model.state_dict(), quantized_model_path)
