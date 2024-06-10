@@ -23,7 +23,7 @@ class Quantizer:
     def compute_gradient(self, weights, s):
         Q_weights = self.quantize(s)
         loss = torch.norm(Q_weights - weights, p=2) ** 2
-        loss.backweightsard()
+        loss.backward()
         return loss
 
     def optimize_quantization_range(self, learning_rate, epochs):

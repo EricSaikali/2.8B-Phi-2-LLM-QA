@@ -24,7 +24,7 @@ def apply_quantization_to_model(model, n, learning_rate, epochs):
 
 
 if __name__ == "__main__":
-    model_id = "microsoft/phi-2"
+    model_id = "gpt2"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id)
     model.eval() # TODO check if needed
