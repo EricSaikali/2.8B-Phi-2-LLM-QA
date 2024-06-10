@@ -33,7 +33,7 @@ def read_config(config_file):
 
 
 if __name__ == "__main__":
-    DATA_FOLDER = "model/datasets"
+    DATA_FOLDER = "datasets"
     config_file = "config.ini"
     data_info_file = "dataset_info.ini"
     training_config_file = "training.ini"
