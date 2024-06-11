@@ -2,3 +2,5 @@ datasets/helpSteer/processed/helpsteer_train.jsonl filter=lfs diff=lfs merge=lfs
 datasets/shp/processed/shp_train.jsonl filter=lfs diff=lfs merge=lfs -text
 datasets/MMLU/processed/MMLU_train.jsonl filter=lfs diff=lfs merge=lfs -text
 datasets/MMLU/processed filter=lfs diff=lfs merge=lfs -text
+datasets/shp/processed/shp_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/MMLU/processed/MMLU_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
