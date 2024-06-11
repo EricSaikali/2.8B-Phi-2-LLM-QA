@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --chdir /scratch/izar/balykov/ShAIkespear_m2/model
+#SBATCH --chdir /scratch/izar/saikali/mnlpproj4/model
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 16
 #SBATCH --mem-per-gpu 32G
@@ -18,7 +18,8 @@ module load python
 
 source ../../shaikespear/bin/activate
 
-python depth_evaluator.py --eval_method reward --file "../evaluation_data/EPFL/EPFL_DPO_val.jsonl" --model "../training/EPFL_PLUS_10_06/models/EPFL_DPO/final"
-python depth_evaluator.py --eval_method reward --file "../evaluation_data/helpSteer/helpsteer_val.jsonl" --model "../training/EPFL_PLUS_10_06/models/EPFL_DPO/final"
-python depth_evaluator.py --eval_method mcqa --file "../evaluation_data/MathQA/mathQA_val.jsonl" --model "../training/EPFL_PLUS_10_06/models/EPFL_DPO/final"
-python depth_evaluator.py --eval_method mcqa --file "../evaluation_data/openQA/openQA_val.jsonl" --model "../training/EPFL_PLUS_10_06/models/EPFL_DPO/final"
+python depth_evaluator.py --eval_method reward --file "../datasets/EPFL/processed/EPFL_DPO_val.jsonl" --model "../training/training_31_05_Anthony/models/EPFL_DPO/final"
+python depth_evaluator.py --eval_method reward --file "../datasets/helpSteer/processed/helpsteer_val.jsonl" --model "../training/training_31_05_Anthony/models/EPFL_DPO/final"
+python depth_evaluator.py --eval_method mcqa --file "../datasets/MathQA/processed/mathQA_val.jsonl" --model "../training/training_31_05_Anthony/models/EPFL_DPO/final"
+python depth_evaluator.py --eval_method mcqa --file "../datasets/openQA/processed/openQA_val.jsonl" --model "../training/training_31_05_Anthony/models/EPFL_DPO/final"
+python depth_evaluator.py --eval_method mcqa --file "../datasets/MMLU/processed/MMLU_val.jsonl" --model "../training/training_31_05_Anthony/models/EPFL_DPO/final"
