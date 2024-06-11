@@ -19,9 +19,9 @@ def format_function(dataset_name="EPFL_SFT"):
     def format_helpSteer():
         raise NotImplementedError("Not implemented yet")
 
-    if dataset_name == "EPFL_SFT":
+    if dataset_name == "EPFL_SFT" or dataset_name == "SHP_SFT":
         return format_EPFL_SFT
-    elif (dataset_name == "MMMLU" or dataset_name == "openQA" or dataset_name == "mathQA"):
+    elif (dataset_name == "MMLU" or dataset_name == "openQA" or dataset_name == "mathQA"):
         return format_MCQA
     elif dataset_name == "helpSteer":
         return format_helpSteer
