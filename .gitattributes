@@ -4,3 +4,8 @@ datasets/MMLU/processed/MMLU_train.jsonl filter=lfs diff=lfs merge=lfs -text
 datasets/MMLU/processed filter=lfs diff=lfs merge=lfs -text
 datasets/shp/processed/shp_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
 datasets/MMLU/processed/MMLU_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/helpSteer/raw/helpsteer_train.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/MMLU/raw/MMLU_train.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/MMLU/raw/MMLU_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/shp/raw/shp_train.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/shp/raw/shp_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
