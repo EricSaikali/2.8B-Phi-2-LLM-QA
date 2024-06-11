@@ -254,9 +254,12 @@ class AutoDPOModelForCausalLM(PreTrainedModelWrapper):
         tokens_chosen = torch.cat([encoded_prompt["input_ids"], encoded_chosen["input_ids"]], dim=1)
         tokens_rejected = torch.cat([encoded_prompt["input_ids"], encoded_rejected["input_ids"]], dim=1)
 
+        mask_chosen = torch.cat([encoded_prompt["attention_mask"], encoded_chosen["attention_mask"]], dim=1)
+        mask_rejected = torch.cat([encoded_prompt["attention_mask"], encoded_rejected["attention_mask"]], dim=1)
+
         with torch.no_grad():
-            chosen_logits = self.pretrained_model(tokens_chosen).logits
-            rejected_logits = self.pretrained_model(tokens_rejected).logits
+            chosen_logits = self.pretrained_model(input_ids=tokens_chosen, attention_mask=mask_chosen).logits
+            rejected_logits = self.pretrained_model(input_ids=tokens_rejected, attention_mask=mask_rejected).logits
 
         chosen_logps = torch.zeros(chosen_logits.shape[0]).to(self.device)
         rejected_logps = torch.zeros(rejected_logits.shape[0]).to(self.device)
