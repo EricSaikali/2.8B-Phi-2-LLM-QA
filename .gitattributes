@@ -9,3 +9,5 @@ datasets/MMLU/raw/MMLU_train.jsonl filter=lfs diff=lfs merge=lfs -text
 datasets/MMLU/raw/MMLU_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
 datasets/shp/raw/shp_train.jsonl filter=lfs diff=lfs merge=lfs -text
 datasets/shp/raw/shp_train_clipped.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/shp/processed/shp_DPO_train.jsonl filter=lfs diff=lfs merge=lfs -text
+datasets/shp/processed/shp_SFT_train.jsonl filter=lfs diff=lfs merge=lfs -text
