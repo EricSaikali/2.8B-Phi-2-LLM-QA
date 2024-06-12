@@ -21,7 +21,7 @@ def format_function(dataset_name="EPFL_SFT"):
 
     if dataset_name == "EPFL_SFT":
         return format_EPFL_SFT
-    elif dataset_name in ["MMLU", "openQA", "mathQA", "scienceQA", "tal"]:
+    elif dataset_name in ["MMLU", "openQA", "mathQA", "scienceQA", "tal", "mcqa_all", "balanced_merged"]:
         return format_MCQA
     elif dataset_name == "helpSteer":
         return format_helpSteer
