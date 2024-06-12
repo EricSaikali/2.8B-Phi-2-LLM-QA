@@ -261,27 +261,11 @@ class AutoDPOModelForCausalLM(PreTrainedModelWrapper):
             chosen_logits = self.pretrained_model(input_ids=tokens_chosen, attention_mask=mask_chosen).logits
             rejected_logits = self.pretrained_model(input_ids=tokens_rejected, attention_mask=mask_rejected).logits
 
-        chosen_logps = torch.zeros(chosen_logits.shape[0]).to(self.device)
-        rejected_logps = torch.zeros(rejected_logits.shape[0]).to(self.device)
+        chosen_logps = F.log_softmax(chosen_logits, dim=-1)
+        rejected_logps = F.log_softmax(rejected_logits, dim=-1)
 
-        range_chosen = range(encoded_prompt["input_ids"].shape[1] - 1, tokens_chosen.shape[1] - 1)
-        range_rejected = range(encoded_prompt["input_ids"].shape[1] - 1, tokens_rejected.shape[1] - 1)
-
-        for i in range_chosen:
-            past_tok, cur_tok = i, i + 1
-            token_logits = chosen_logits[:, past_tok, :]
-            token_log_probs = F.log_softmax(token_logits, dim=-1)
-            log_token_prob = token_log_probs[:, tokens_chosen[:, cur_tok]].diagonal()
-            chosen_logps += log_token_prob
-
-        for i in range_rejected:
-            past_tok, cur_tok = i, i + 1
-            token_logits = rejected_logits[:, past_tok, :]
-            token_log_probs = F.log_softmax(token_logits, dim=-1)
-            log_token_prob = token_log_probs[:, tokens_rejected[:, cur_tok]].diagonal()
-            rejected_logps += log_token_prob
-
-        ###############################################################
+        chosen_logps = torch.gather(chosen_logps, 2, encoded_chosen["input_ids"].unsqueeze(-1)).squeeze(-1).sum(dim=1)
+        rejected_logps = torch.gather(rejected_logps, 2, encoded_rejected["input_ids"].unsqueeze(-1)).squeeze(-1).sum(dim=1)
 
         return chosen_logps.detach().to("cpu"), rejected_logps.detach().to("cpu")
 
