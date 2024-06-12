@@ -97,7 +97,7 @@ def train_SFT(model, tokenizer, num_epochs, output_folder, sft_config, peft_conf
     dataset_name = kwargs["name"]
     prompt_formatting_function = format_function(dataset_name)
 
-    response_template = "\n\nExplanation: "
+    response_template = "### Explanation: "
     collator = DataCollatorForCompletionOnlyLM(response_template, tokenizer=tokenizer)
 
     training_args = sft_config
