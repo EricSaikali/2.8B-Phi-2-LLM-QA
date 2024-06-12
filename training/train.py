@@ -10,6 +10,7 @@ from typing import List, Dict, Tuple, Any
 # nlp imports
 import torch
 import datasets
+import transformers
 from peft import LoraConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.integrations import TensorBoardCallback
@@ -62,6 +63,8 @@ def train_DPO(model, tokenizer, num_epochs, output_folder, dpo_config, peft_conf
     training_args.max_prompt_length = eval(kwargs["max_seq_length"])
     training_args.num_train_epochs = num_epochs
 
+    early_stopping_callback = transformers.EarlyStoppingCallback(early_stopping_patience=1, early_stopping_threshold=0.01)
+
     learning_rate = kwargs["learning_rate"]
     if learning_rate != "default":
         learning_rate = float(learning_rate)
@@ -75,6 +78,7 @@ def train_DPO(model, tokenizer, num_epochs, output_folder, dpo_config, peft_conf
         train_dataset=train_dataset,
         eval_dataset=test_dataset,
         tokenizer=tokenizer,
+        callbacks=[early_stopping_callback],
     )
 
     # training the model
@@ -108,6 +112,8 @@ def train_SFT(model, tokenizer, num_epochs, output_folder, sft_config, peft_conf
     training_args.max_seq_length = eval(kwargs["max_seq_length"])
     training_args.num_train_epochs = num_epochs
 
+    early_stopping_callback = transformers.EarlyStoppingCallback(early_stopping_patience=1, early_stopping_threshold=0.01)
+
     learning_rate = kwargs["learning_rate"]
     if learning_rate != "default":
         learning_rate = float(learning_rate)
@@ -120,9 +126,10 @@ def train_SFT(model, tokenizer, num_epochs, output_folder, sft_config, peft_conf
         peft_config=peft_config,
         train_dataset=train_dataset,
         eval_dataset=test_dataset,
-        # tokenizer=tokenizer,
+        tokenizer=tokenizer,
         formatting_func=prompt_formatting_function,
         data_collator=collator,
+        callbacks=[early_stopping_callback],
     )
 
     # training the model
@@ -221,7 +228,18 @@ def get_configs(param_dict: Dict[str, Any]) -> (SFTConfig, DPOConfig, LoraConfig
         warmup_ratio=float(param_dict["warmup_ratio_sft"]),
 
         logging_steps=1,
-        report_to=["tensorboard"],
+        report_to="tensorboard",
+
+        metric_for_best_model="eval_loss",
+        load_best_model_at_end=True,
+
+        save_strategy="steps",
+        eval_strategy="steps",
+        save_steps=250,
+        eval_steps=250,
+
+        do_train=True,
+        do_eval=True,
     )
 
     dpo_config = DPOConfig(
@@ -240,7 +258,18 @@ def get_configs(param_dict: Dict[str, Any]) -> (SFTConfig, DPOConfig, LoraConfig
         warmup_ratio=float(param_dict["warmup_ratio_dpo"]),
 
         logging_steps=1,
-        report_to=["tensorboard"],
+        report_to="tensorboard",
+
+        metric_for_best_model="eval_loss",
+        load_best_model_at_end=True,
+
+        save_strategy="steps",
+        eval_strategy="steps",
+        save_steps=250,
+        eval_steps=250,
+
+        do_train=True,
+        do_eval=True,
     )
 
     peft_config = LoraConfig(
@@ -274,5 +303,5 @@ if __name__ == "__main__":
     peft_config, sft_config, dpo_config = get_configs(dict(training_configs[config_name].items()))
 
     config_list_names = args.config_list_names
-    # config_list_names = ["training_31_05_Anton"]
+    # config_list_names = ["temp"]
     train(config_list_names, model_configs, data_configs, peft_config, sft_config, dpo_config)
