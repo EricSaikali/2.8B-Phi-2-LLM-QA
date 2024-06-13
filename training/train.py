@@ -284,7 +284,7 @@ if __name__ == "__main__":
     parser.add_argument("--config_list_names", type=str, nargs="+", help="List of the names of the configurations in the config file")
     args = parser.parse_args()
 
-    DATA_FOLDER = "datasets"
+    DATA_FOLDER = "model/datasets"
     config_file = "config.ini"
     data_info_file = "dataset_info.ini"
     training_config_file = "training.ini"
