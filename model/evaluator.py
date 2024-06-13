@@ -439,10 +439,9 @@ if __name__ == '__main__':
             policy_model_path=policy_model_path,
             dpo_model_args=dpo_model_args
         )
-        # policy_acc = evaluator.scoring_mcqa(test_dataloader)
+        policy_acc = evaluator.scoring_mcqa(test_dataloader)
         eval_method.remove("mcqa")
-        metrics["policy_acc"] = 0
-        # metrics["policy_acc"] = policy_acc
+        metrics["policy_acc"] = policy_acc
 
         # Loop over the remaining evaluation methods
         for method in eval_method:
@@ -472,9 +471,8 @@ if __name__ == '__main__':
                 if not quantized:
                     logger.error("Urgent! An error occurred that might result in 0 points!")
                     logger.error("Error: quantized model size should be less than the original model size!")
-                # quantized_policy_acc = evaluator.scoring_quantization(test_dataloader)
-                metrics["quantized_policy_acc"] = 0
-                # metrics["quantized_policy_acc"] = quantized_policy_acc
+                quantized_policy_acc = evaluator.scoring_quantization(test_dataloader)
+                metrics["quantized_policy_acc"] = quantized_policy_acc
 
         logger.info("Evaluation Completed! Results:")
         logger.info(metrics)
