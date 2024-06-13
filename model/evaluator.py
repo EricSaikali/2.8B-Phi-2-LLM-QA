@@ -1,6 +1,4 @@
 import os
-import sys
-
 import yaml
 import glob
 import torch
@@ -20,6 +18,7 @@ from models.model_dpo import AutoDPOModelForCausalLM, AutoDPOModelForSeq2SeqLM
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("mnlp-2024-auto-evaluator")
 
+
 def repository_check():
     """
     Check if the repository is correctly set up.
@@ -38,13 +37,14 @@ def repository_check():
 
     # Assert that the documents are submitted in the Doc folder
 
+
 class DPOModelEvaluator():
     def __init__(
-        self,
-        task_type: str="causal_lm",
-        policy_model_path: str=None,
-        reference_model_path: str=None,
-        dpo_model_args: dict={}
+            self,
+            task_type: str = "causal_lm",
+            policy_model_path: str = None,
+            reference_model_path: str = None,
+            dpo_model_args: dict = {}
     ):
         if task_type == "causal_lm":
             self.model_class = AutoDPOModelForCausalLM
@@ -82,10 +82,10 @@ class DPOModelEvaluator():
             logger.error("Important! You must properly save the tokenizer in the model directory!")
 
     def get_batch_predictions_mcqa(
-        self,
-        model: PreTrainedModelWrapper,
-        tokenizer: PreTrainedTokenizerBase,
-        batch: Dict[str, List[Union[str, List[str]]]]
+            self,
+            model: PreTrainedModelWrapper,
+            tokenizer: PreTrainedTokenizerBase,
+            batch: Dict[str, List[Union[str, List[str]]]]
     ):
         """Get the predictions of a student's DPO model for a batch of multiple-choice questions.
 
@@ -125,6 +125,7 @@ class DPOModelEvaluator():
         for _, batch in enumerate(test_dataloader):
             policy_preds = self.get_batch_predictions_mcqa(
                 policy_model, self.policy_tokenizer, batch)
+
             all_policy_preds.extend(policy_preds)
             all_labels.extend(batch["answer"])
 
@@ -138,12 +139,12 @@ class DPOModelEvaluator():
         return policy_accuracy
 
     def get_batch_predictions_reward(
-        self,
-        model: PreTrainedModelWrapper,
-        policy_chosen_logps: torch.FloatTensor,
-        policy_rejected_logps: torch.FloatTensor,
-        reference_chosen_logps: torch.FloatTensor,
-        reference_rejected_logps: torch.FloatTensor,
+            self,
+            model: PreTrainedModelWrapper,
+            policy_chosen_logps: torch.FloatTensor,
+            policy_rejected_logps: torch.FloatTensor,
+            reference_chosen_logps: torch.FloatTensor,
+            reference_rejected_logps: torch.FloatTensor,
     ):
         """Get the reward estimations of a student's DPO model for a batch of preference pairs.
 
@@ -270,16 +271,19 @@ class DPOModelEvaluator():
 
         return policy_reward_accuracy
 
+
 class RAGModelEvaluator():
     def __init__(
-        self,
-        rag_policy_model_path: str,
-        rag_model_args: dict={}
+            self,
+            task_type: str = "causal_lm",
+            rag_policy_model_path: str = None,
+            rag_model_args: dict = {}
     ):
         self.rag_policy_model_path = rag_policy_model_path
         self.rag_model_args = rag_model_args
 
         self.rag_dpo_evaluator = DPOModelEvaluator(
+            task_type=task_type,
             policy_model_path=rag_policy_model_path,
             dpo_model_args=rag_model_args
         )
@@ -296,24 +300,41 @@ class RAGModelEvaluator():
         rag_accuracy = self.rag_dpo_evaluator.scoring_mcqa(test_dataloader)
         return rag_accuracy
 
+
 class QuantizedEvaluator():
     def __init__(
-        self,
-        policy_model_path: str=None,
-        quantized_model_path: str=None,
-        quantized_model_args: dict={}
+            self,
+            task_type: str = "causal_lm",
+            policy_model_path: str = None,
+            quantized_model_path: str = None,
+            policy_model_args: dict = {},
+            quantized_model_args: dict = {}
     ):
         assert policy_model_path is not None, "You must provide the path to the policy model!"
         assert quantized_model_path is not None, "You must provide the path to the quantized model!"
 
+        if task_type == "causal_lm":
+            self.model_class = AutoDPOModelForCausalLM
+        elif task_type == "seq2seq":
+            self.model_class = AutoDPOModelForSeq2SeqLM
+        else:
+            raise ValueError("Invalid task type! Please choose from 'causal_lm' or 'seq2seq'.")
+
         self.policy_model_path = policy_model_path
         self.quantized_model_path = quantized_model_path
+
+        if policy_model_args is None:
+            self.policy_model_args = {}
+        else:
+            self.policy_model_args = policy_model_args
+
         if quantized_model_args is None:
             self.quantized_model_args = {}
         else:
             self.quantized_model_args = quantized_model_args
 
         self.quantized_dpo_evaluator = DPOModelEvaluator(
+            task_type=task_type,
             policy_model_path=quantized_model_path,
             dpo_model_args=quantized_model_args
         )
@@ -339,25 +360,24 @@ class QuantizedEvaluator():
             quantized (bool): A boolean indicating if the model is quantized.
         """
         quantized = False
-        quantized_checkpoints = glob.glob(f"./{quantized_model_path}/*.bin")
-        if len(quantized_checkpoints) == 0:
-            quantized_checkpoints = glob.glob(f"./{quantized_model_path}/*.safetensors")
-        if len(quantized_checkpoints) == 0:
-            quantized_checkpoints = glob.glob(f"./{quantized_model_path}/*.pt")
 
-        quantized_model_size_on_disk = 0
-        for name in quantized_checkpoints:
-            quantized_model_size_on_disk += os.path.getsize(name)
+        policy_model = self.model_class.from_pretrained(
+            self.policy_model_path,
+            **self.policy_model_args)
+        policy_model_footprint = policy_model.pretrained_model.get_memory_footprint()
+        del policy_model
 
-        orig_checkpoints = glob.glob(f"{self.policy_model_path}/*.bin")
-        orig_model_size_on_disk = 0
-        for name in orig_checkpoints:
-            orig_model_size_on_disk += os.path.getsize(name)
+        quantized_model = self.model_class.from_pretrained(
+            self.quantized_model_path,
+            **self.quantized_model_args)
+        quantized_model_footprint = quantized_model.pretrained_model.get_memory_footprint()
+        del quantized_model
 
-        if quantized_model_size_on_disk < orig_model_size_on_disk:
+        if quantized_model_footprint < policy_model_footprint:
             quantized = True
 
-        return quantized_model_size_on_disk, orig_model_size_on_disk, quantized
+        return quantized_model_footprint, policy_model_footprint, quantized
+
 
 if __name__ == '__main__':
     # Basic repository check to ensure the submission is correct
@@ -419,17 +439,20 @@ if __name__ == '__main__':
             policy_model_path=policy_model_path,
             dpo_model_args=dpo_model_args
         )
-        policy_acc= evaluator.scoring_mcqa(test_dataloader)
+        # policy_acc = evaluator.scoring_mcqa(test_dataloader)
         eval_method.remove("mcqa")
-        metrics["policy_acc"] = policy_acc
+        metrics["policy_acc"] = 0
+        # metrics["policy_acc"] = policy_acc
 
         # Loop over the remaining evaluation methods
         for method in eval_method:
             if method == "rag":
                 # Check if the documents directory is present
-                assert os.path.isdir("documents"), "You must have a directory named 'documents' with all the documents used for RAG, in the current directory."
+                assert os.path.isdir(
+                    "documents"), "You must have a directory named 'documents' with all the documents used for RAG, in the current directory."
                 rag_policy_model_path = main_config["rag_policy_model_path"]
                 evaluator = RAGModelEvaluator(
+                    task_type,
                     rag_policy_model_path,
                     rag_model_args)
                 rag_policy_acc = evaluator.scoring_rag(test_dataloader)
@@ -437,17 +460,21 @@ if __name__ == '__main__':
             elif method == "quantiz":
                 quantized_model_path = main_config["quantized_policy_model_path"]
                 evaluator = QuantizedEvaluator(
-                    policy_model_path,
-                    quantized_model_path,
-                    quantized_model_args)
-                orig_size, quantized_size, quantized = evaluator.check_model_quantization()
+                    task_type=task_type,
+                    policy_model_path=policy_model_path,
+                    quantized_model_path=quantized_model_path,
+                    policy_model_args=dpo_model_args,
+                    quantized_model_args=quantized_model_args)
+                quantized_size, orig_size, quantized = evaluator.check_model_quantization()
                 metrics["orig_model_size"] = orig_size
                 metrics["quantized_model_size"] = quantized_size
+                metrics["quantized"] = quantized
                 if not quantized:
                     logger.error("Urgent! An error occurred that might result in 0 points!")
                     logger.error("Error: quantized model size should be less than the original model size!")
-                quantized_policy_acc = evaluator.scoring_quantization(test_dataloader)
-                metrics["quantized_policy_acc"] = quantized_policy_acc
+                # quantized_policy_acc = evaluator.scoring_quantization(test_dataloader)
+                metrics["quantized_policy_acc"] = 0
+                # metrics["quantized_policy_acc"] = quantized_policy_acc
 
         logger.info("Evaluation Completed! Results:")
         logger.info(metrics)

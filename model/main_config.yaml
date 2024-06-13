@@ -1,9 +1,9 @@
 "team_name": "ShAIkespear" # Your team name
-"eval_method": ["mcqa"] # mcqa, reward, rag, compression
+"eval_method": ["mcqa", "quantiz"] # mcqa, reward, rag, quantiz
 "task_type": "causal_lm" # causal_lm, seq2seq
-"policy_model_path": "ShAIkespear/Phi-2_DPO_M2" # Your path to the final checkpoint
+"policy_model_path": "./checkpoints/training_12_06_MERGED_MCQA/models/mcqa_all/final" # Your path to the final checkpoint
 "reference_model_path": "microsoft/phi-2" # The repo id of your pretrained reference model
-"quantized_policy_model_path": null # Your path to the final quantized checkpoint
+"quantized_policy_model_path": "../quantization/model/checkpoints/training_12_06_MERGED_MCQA-quantized" # Your path to the final quantized checkpoint
 "rag_policy_model_path": null # Your path to the final RAG checkpoint
 "test_data_path": "./datasets/mcqa_example.jsonl" # Your path to the test data
 "dpo_model_args": null # Put any model arguments required to load your DPO model below
@@ -11,4 +11,8 @@
   "encoder_model_path": null
   "retriever_model_path": null
   "document_dir": null
-"quantized_model_args": null # Put any model arguments required to load your quantized model below
+"quantized_model_args": # Put any model arguments required to load your quantized model below
+  "load_in_4bit": True
+  "bnb_4bit_use_double_quant": True
+  "bnb_4bit_quant_type": "nf4"
+

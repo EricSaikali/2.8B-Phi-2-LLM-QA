@@ -1,9 +1,5 @@
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import bitsandbytes as bnb
-from accelerate.utils import BnbQuantizationConfig
-from accelerate.utils import load_and_quantize_model
-from accelerate import Accelerator
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 # pip install git+https://github.com/huggingface/accelerate.git
 # pip install bitsandbytes
@@ -11,27 +7,13 @@ from accelerate import Accelerator
 
 if __name__ == "__main__":
 
-    model_path = "microsoft/phi-2"
-    model_name = "phi-2"
+    model_path = "../model/checkpoints/training_12_06_MERGED_MCQA/models/EPFL_DPO/final"
+    model_name = "training_12_06_MERGED_MCQA"
     tokenizer = AutoTokenizer.from_pretrained(model_path)
-    model = AutoModelForCausalLM.from_pretrained(model_path)
 
-    bnb_quantization_config = BnbQuantizationConfig(load_in_4bit=True, bnb_4bit_compute_dtype='bf16',
-                                                    bnb_4bit_use_double_quant=True, bnb_4bit_quant_type="nf4")
+    bnb_quantization_config = BitsAndBytesConfig(load_in_4bit=True,  bnb_4bit_use_double_quant=True, bnb_4bit_quant_type="nf4")
 
-    quantized_model = load_and_quantize_model(model, bnb_quantization_config=bnb_quantization_config, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(model_path, quantization_config=bnb_quantization_config)
 
-    accelerate = Accelerator()
-    new_weights_location = f"./model/checkpoints/{model_name}-quantized-2"
-    try:
-        accelerate.save_model(quantized_model, new_weights_location)
-    except:
-        pass
-    try:
-        quantized_model.save_pretrained(f"./model/checkpoints/{model_name}-quantized-1")
-    except:
-        pass
-    try:
-        tokenizer.save_pretrained(f"./model/checkpoints/{model_name}-quantized-1")
-    except:
-        pass
+    model.save_pretrained(f"./model/checkpoints/{model_name}-quantized")
+    tokenizer.save_pretrained(f"./model/checkpoints/{model_name}-quantized")
