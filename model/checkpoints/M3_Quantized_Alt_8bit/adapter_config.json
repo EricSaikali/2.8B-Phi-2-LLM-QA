@@ -14,9 +14,9 @@
   "r": 16,
   "revision": null,
   "target_modules": [
-    "fc2",
     "fc1",
-    "Wqkv"
+    "Wqkv",
+    "fc2"
   ],
   "task_type": "CAUSAL_LM"
 }
