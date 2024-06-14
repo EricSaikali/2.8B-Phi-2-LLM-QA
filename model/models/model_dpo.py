@@ -50,7 +50,10 @@ class AutoDPOModelForCausalLM(PreTrainedModelWrapper):
 
         self.pretrained_model.generation_config.pad_token_ids = self.pretrained_model.generation_config.eos_token_id
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.pretrained_model = self.pretrained_model.to(self.device)
+        try:
+            self.pretrained_model = self.pretrained_model.to(self.device)
+        except:
+            print("Model is already on the correct device.")
         self.cnt_answer_not_found = 0
 
         if not any(hasattr(self.pretrained_model, attribute) for attribute in self.lm_head_namings):
