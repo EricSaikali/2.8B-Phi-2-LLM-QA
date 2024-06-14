@@ -3,10 +3,11 @@
 "task_type": "causal_lm" # causal_lm, seq2seq
 "policy_model_path": "ShAIkespear/Phi-2_DPO_M3_Base" # Your path to the final checkpoint
 "reference_model_path": "microsoft/phi-2" # The repo id of your pretrained reference model
-"quantized_policy_model_path": "../quantization/model/checkpoints/training_12_06_MERGED_MCQA-quantized" # Your path to the final quantized checkpoint
+"quantized_policy_model_path": "ShAIkespear/Phi-2_DPO_M3_Quantized" # Your path to the final quantized checkpoint
 "rag_policy_model_path": null # Your path to the final RAG checkpoint
 "test_data_path": "./datasets/mcqa_example.jsonl" # Your path to the test data
-"dpo_model_args": null # Put any model arguments required to load your DPO model below
+"dpo_model_args": # Put any model arguments required to load your DPO model below
+  "device_map": "cuda:0"
 "rag_model_args": # Put any model arguments required to load your rag model below
   "encoder_model_path": null
   "retriever_model_path": null
