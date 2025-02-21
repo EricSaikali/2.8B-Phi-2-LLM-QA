@@ -20,7 +20,7 @@ from models.model_dpo import AutoDPOModelForCausalLM, AutoDPOModelForSeq2SeqLM
 import argparse
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("mnlp-2024-auto-evaluator")
+logger = logging.getLogger("2024-auto-evaluator")
 
 
 def repository_check():

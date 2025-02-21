@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --chdir /scratch/izar/saikali/mnlpproj4/training
+#SBATCH --chdir /scratch/izar/saikali/<proj-dir>/training
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 16
 #SBATCH --mem-per-gpu 32G
