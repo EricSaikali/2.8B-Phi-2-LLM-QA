@@ -18,10 +18,7 @@ This repository is structured as follows:
   - Quantization scripts
   - RAG-related files (if applicable)
   - Any other necessary functions for evaluation
-- `pdfs/` – Stores the final project report. 
-
-## Tests
-These tests validate the correctness and formatting of your repository. 
+- `pdfs/` – Stores the final project report.
 
 ## Summary of Findings
 - **Training Approaches**: DPO significantly improves model alignment with preference data, resulting in better responses.
