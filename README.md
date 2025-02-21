@@ -1,18 +1,30 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/NXyI9KHk)
-# CS-552 - Final submission
+# How to Replace TAs: A Comprehensive Study on Letting LLMs Answer Your Questions
 
-Welcome to the final step of your MNLP project! As you can read in the [project description](https://docs.google.com/document/d/1SP8SCHPOZZGEhs2ay-38FjedRE1bS9Q99VJb28eHoYk/edit?usp=sharing), you have 2 main deliverables: 
-1. Your final model - including its augmented counterpart(s)
-3. The final report
+## Project Overview
+This project investigates the feasibility of utilizing Large Language Models (LLMs) to autonomously answer multiple-choice exam questions (MCQA). While general question-answering tasks are relatively straightforward, challenges arise when dealing with more domain-specific inquiries, particularly those requiring mathematical reasoning.
 
+To address these challenges, we experimented with different training methodologies, including Supervised Fine-Tuning (SFT) and Direct Preference Optimization (DPO). Our findings indicate that models fine-tuned with DPO align significantly better with user preferences and demonstrate slight improvements in performance. Additionally, we explored quantization techniques, reducing model precision to 8-bit and 4-bit representations, and analyzed their impact on performance.
 
-## Repo Structure
+Our study highlights the difficulties associated with automated answering of STEM-related MCQAs, emphasizing the limitations and potential areas for improvement in LLM-based educational assistance.
 
-The repo has 4 folders, 2 of which serve for you to submit the deliverables:
-1. `_templates` contains the latex template for your final report. You MUST use this template.
-2. `_tests` contains some scripts which run automated tests so you can be sure your submission is correctly formatted (e.g., that the right files exist in the right place). **Importantly, if your team is NOT implementing RAG, you should change the first line of `_tests/model_rag_validator.py` into `IMPLEMENTING_RAG = False`.**
-3. `model` should contain your final models and your model-related implementation files (this includes any file for training, inference, quantization, RAG, and other necessary functions needed for the evaluator to execute successfully). Your implementation should be compatible with the [provided code template](https://github.com/CS-552/project-code-2024).
-4. `pdfs` should contain a single pdf file, your final report (named `<YOUR-GROUP-NAME>.pdf`).
+## Repository Structure
+This repository is structured as follows:
 
-## Running the tests manually
-The autograding tests run automatically with every commit to the repo. Please check M1's repo for instructions on running the tests manually if you wish to do so.
+- `_templates/` – Contains the LaTeX template for the final report.
+- `_tests/` – Includes scripts for automated validation and formatting. 
+- `model/` – Contains all relevant implementation files, including:
+  - Training scripts
+  - Inference code
+  - Quantization scripts
+  - RAG-related files (if applicable)
+  - Any other necessary functions for evaluation
+- `pdfs/` – Stores the final project report. 
+
+## Tests
+These tests validate the correctness and formatting of your repository. 
+
+## Summary of Findings
+- **Training Approaches**: DPO significantly improves model alignment with preference data, resulting in better responses.
+- **Performance Evaluation**: While the model effectively handles general Q&A tasks, its accuracy drops when dealing with highly specialized MCQAs.
+- **Quantization Effects**: Reducing precision to 8-bit and 4-bit representations leads to minor performance trade-offs, which are analyzed in detail.
+- **Challenges**: Answering STEM MCQAs remains an open problem, requiring further advancements in LLM reasoning and contextual understanding.

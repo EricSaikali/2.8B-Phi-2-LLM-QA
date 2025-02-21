@@ -5,9 +5,9 @@
 #SBATCH --mem-per-gpu 32G
 #SBATCH --time 24:00:00
 #SBATCH --gres gpu:1
-#SBATCH --account cs-552
-#SBATCH --qos cs-552
-#SBATCH --reservation cs-552
+#SBATCH --account <specific-account>
+#SBATCH --qos <specific-account>
+#SBATCH --reservation <specific-account>
 
 # `SBATCH --something` is how you tell SLURM what resources you need
 # The --reservation line only works during the 2-week period
