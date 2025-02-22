@@ -24,4 +24,4 @@ This repository is structured as follows:
 - **Training Approaches**: DPO significantly improves model alignment with preference data, resulting in better responses.
 - **Performance Evaluation**: While the model effectively handles general Q&A tasks, its accuracy drops when dealing with highly specialized MCQAs.
 - **Quantization Effects**: Reducing precision to 8-bit and 4-bit representations leads to minor performance trade-offs, which are analyzed in detail.
-- **Challenges**: Answering STEM MCQAs remains an open problem, requiring further advancements in LLM reasoning and contextual understanding.
+- **Challenges**: Answering STEM MCQAs remains an open problem, requiring further advancements in LLM reasoning and contextual understanding. 
